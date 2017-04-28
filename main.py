@@ -26,7 +26,8 @@ import time
 from PIL import Image as NewImage
 from math import *
 
-def main():
+
+class Main:
     
     ''' XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
     XXXX
@@ -37,34 +38,34 @@ def main():
     XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'''
     
     # Embed graphics.py draw() into a native function
-    def doDraw(thing):
-        thing.draw(win)
+    def doDraw(self, thing):
+        thing.draw(self.win)
     
     # 'erases' every graphics.py object in a list from the window
     # Unused in current iteration
-    def unDraw(thing):
+    def unDraw(self, thing):
         thing.undraw()
         
     # Random number generator
-    def randVal():
+    def randVal(self):
         value = randint(0,4085)
         return value
     
     # Takes value and it's maximum and plots it to an RGB value (0-255)
-    def rgbMap(val, limiter):
+    def rgbMap(self, val, limiter):
         val2 = (val/limiter) * 255
         int(val2)
         return int(val2)
     
     # MATH, calculates the distance between 2 points
     # (point and origin) utilizing their x and y coords
-    def dfc(pointx, pointy, originX, originY):
+    def dfc(self, pointx, pointy, originX, originY):
         output = abs(sqrt(pow(pointx - originX, 2) + pow(pointy - originY, 2)))
         return int(output)
     
     # Takes a list of points as an argument and draws them all as circles
     # isUsed to COLORIFY the image
-    def allAsCircles(item):
+    def allAsCircles(self, item):
         for i in item:
             c = Circle(i, 2)
             
@@ -106,7 +107,7 @@ def main():
     # processing capabilities
     # ... This functionality would be nice to have, but NEEDS WORK
     # TODO: Some function to paint the background based on pixel data
-    def genBGPixels():
+    def genBGPixels(self):
         bgpixels = []
         for x in range(width):
             for y in range(height):
@@ -126,7 +127,7 @@ def main():
     # selected vertex by the amount of half the distance between them,
     # and then repeats, using the last formed point as a basis for
     # the next point
-    def genPoint():  # Create the next point
+    def genPoint(self):  # Create the next point
         lastPoint = points[-1]  # Grab last point in list
         lastPointX = lastPoint.getX()  # Grab that points X
         lastPointY = lastPoint.getY()  # Grab that points Y
@@ -164,124 +165,126 @@ def main():
         newpoint = Point(newX, newY)
         #newpoint.setFill('red')
         points.append(newpoint)
-        
-    '''XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-    XXXX
-    XXXX
-    XXXX      BEGIN MAIN FUNCTION
-    XXXX
-    XXXX
-    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'''
-    
-    ''' VARIABLES '''
-    # Operating variables, these can be changed to suit user
-    width = 2000  # Window/image width
-    height = 1600  # Window/image height
-    
-    # Starting Triangle. [x1,y1], [x2,y2], [x3,y3]
-    triangle = [[0, 0], [width, 0], [width/2, height]]
-    
-    # Whether to render the final image using circles (True)
-    # or points/dots (False)
-    drawAsCircles = True
-    
-    #Number of dots to generate
-    dotCount = 5000
-    
-    ''' Developer Variables '''
-    # Developer variables, do not touch these
-    originX = width/2  # Center of the screen X
-    originY = height/2  # Center of the screen Y
-    points = []  # Array will store all points on screen
-    loop = True  # Main loop declared for redundancy
-    epochTime = time.clock()  # Holds the time of the functions beginning
-    
-    # Generate the initial point to start at.
-    # TODO: Replace this with a randomized point function
-    startPoint = Point(originX, originY)
-    
-    # Initialize the graphical window
-    win = GraphWin('Serpinski Triangle', width, height) # Base Window
-    win.setBackground('black')
-    
-    # Does the same thing as win.setBackground, but will be visible in PIL
-    # image output
-    setDress = Rectangle(Point(0,0),Point(width,height))
-    setDress.setFill('black')
-    
-    # Create the pseudo-random first point
-    # TODO: Figure out how to generate a random point inside a triangle
-    # newpoint = Point(randrange())
 
-    # Move initial triangle points into the points array
-    for i in triangle: 
-        item = Point(i[0],i[1])
-        points.append(item)
-    
-    # Move the 'random' start point into the points array (Must occur after the
-    # triangle is placed into the array)
-    points.append(startPoint)
-    
-    # Begin main loop
-    # Here determine all points in triangle space
-    for step in range(dotCount):
-        # Time at beginning of loop
-        nowTime = time.clock()
-        
-        # Create the next point
-        genPoint()
-        
-        # DEBUG, time it took to generate this point
-        # pDrawTime = time.clock() - nowTime
-        # print ("time since last point = ", pDrawTime)
-                      
-        if win.checkMouse():
-            break
-        
-    pointtime = time.clock() - epochTime
-    print ("Overall time calculating points: ", pointtime)
-    print ("Points added: ", len(points))
-    setDress.draw(win)
-    
-    # Code to use genBGPixels, see genBGPixels for INFO
-    # sdpoints = genBGPixels()
-    # for i in sdpoints:
-    #     doDraw(i)
-    
-    # Generate visual circles/points for points[] data
-    # Critical that this is done last, as it takes a lot of time
-    if drawAsCircles == False:
-        for i in points:
-            #unDraw(i)
-            doDraw(i)
-            # debug/headsup
-            if points.index(i)%150 == 1:
-                print ("Drawn ", points.index(i), " points in ",
-                       time.clock() - epochTime, ".")
-    else:
-        allAsCircles(points)
 
-    # debug/headsup
-    drawTime = time.clock() - epochTime
-    print ("Overall time post drawing: ", drawTime)
-    
-    # debug/headsup
-    print ("Converting TKinter properties to images...")
-    
-    # Converts the TKinter objects on screen to PILable form
-    # And then subsequently saves screen as a .png
-    # TODO: Make filename argumentable
-    win.postscript(file='image.eps', colormode='color')
-    img = NewImage.open('image.eps')
-    img.save('new5.png', 'png')
-    
-    # debug/headsup
-    print ("File saved as new3.png")
-    
-    # ensure the final image is viewable before closing
-    time.sleep(0.5)
-    # wait for a mouse input before closing
-    win.getMouse()
-    win.close()
+    def __init__(self):
+        '''XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        XXXX
+        XXXX
+        XXXX      BEGIN MAIN FUNCTION
+        XXXX
+        XXXX
+        XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'''
+
+        ''' VARIABLES '''
+        # Operating variables, these can be changed to suit user
+        width = 2000  # Window/image width
+        height = 1600  # Window/image height
+
+        # Starting Triangle. [x1,y1], [x2,y2], [x3,y3]
+        triangle = [[0, 0], [width, 0], [width/2, height]]
+
+        # Whether to render the final image using circles (True)
+        # or points/dots (False)
+        drawAsCircles = True
+
+        #Number of dots to generate
+        dotCount = 5000
+
+        ''' Developer Variables '''
+        # Developer variables, do not touch these
+        originX = width/2  # Center of the screen X
+        originY = height/2  # Center of the screen Y
+        self.points = []  # Array will store all points on screen
+        loop = True  # Main loop declared for redundancy
+        epochTime = time.clock()  # Holds the time of the functions beginning
+
+        # Generate the initial point to start at.
+        # TODO: Replace this with a randomized point function
+        startPoint = Point(originX, originY)
+
+        # Initialize the graphical window
+        self.win = GraphWin('Serpinski Triangle', width, height) # Base Window
+        self.win.setBackground('black')
+
+        # Does the same thing as win.setBackground, but will be visible in PIL
+        # image output
+        setDress = Rectangle(Point(0,0),Point(width,height))
+        setDress.setFill('black')
+
+        # Create the pseudo-random first point
+        # TODO: Figure out how to generate a random point inside a triangle
+        # newpoint = Point(randrange())
+
+        # Move initial triangle points into the points array
+        for i in triangle:
+            item = Point(i[0],i[1])
+            points.append(item)
+
+        # Move the 'random' start point into the points array (Must occur after the
+        # triangle is placed into the array)
+        points.append(startPoint)
+
+        # Begin main loop
+        # Here determine all points in triangle space
+        for step in range(dotCount):
+            # Time at beginning of loop
+            nowTime = time.clock()
+
+            # Create the next point
+            genPoint()
+
+            # DEBUG, time it took to generate this point
+            # pDrawTime = time.clock() - nowTime
+            # print ("time since last point = ", pDrawTime)
+
+            if win.checkMouse():
+                break
+
+        pointtime = time.clock() - epochTime
+        print ("Overall time calculating points: ", pointtime)
+        print ("Points added: ", len(points))
+        setDress.draw(win)
+
+        # Code to use genBGPixels, see genBGPixels for INFO
+        # sdpoints = genBGPixels()
+        # for i in sdpoints:
+        #     doDraw(i)
+
+        # Generate visual circles/points for points[] data
+        # Critical that this is done last, as it takes a lot of time
+        if drawAsCircles == False:
+            for i in points:
+                #unDraw(i)
+                doDraw(i)
+                # debug/headsup
+                if points.index(i)%150 == 1:
+                    print ("Drawn ", points.index(i), " points in ",
+                           time.clock() - epochTime, ".")
+        else:
+            allAsCircles(points)
+
+        # debug/headsup
+        drawTime = time.clock() - epochTime
+        print ("Overall time post drawing: ", drawTime)
+
+        # debug/headsup
+        print ("Converting TKinter properties to images...")
+
+        # Converts the TKinter objects on screen to PILable form
+        # And then subsequently saves screen as a .png
+        # TODO: Make filename argumentable
+        win.postscript(file='image.eps', colormode='color')
+        img = NewImage.open('image.eps')
+        img.save('new5.png', 'png')
+
+        # debug/headsup
+        print ("File saved as new3.png")
+
+        # ensure the final image is viewable before closing
+        time.sleep(0.5)
+        # wait for a mouse input before closing
+        win.getMouse()
+        win.close()
     
 main()
