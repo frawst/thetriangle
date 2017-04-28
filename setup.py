@@ -10,6 +10,7 @@ setup(
     long_description=str(readme),
     license='MIT',
     author='Justyn Chaykowski',
+    author_email='frawst@live.ca'
     url='https://github.com/frawst/thetriangle',
     install_requires=['pillow'],
     classifiers=[
