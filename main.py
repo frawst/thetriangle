@@ -88,11 +88,11 @@ class Main:
             #                     rgbMap(dfc(i.getX(), i.getY(),
             #                                originX, originY), width)))
                                 
-            c.setFill(color_rgb(rgbMap(i.getY(), self.height),
-                                rgbMap(i.getX(), self.width),
+            c.setFill(color_rgb(self.rgbMap(i.getY(), self.height),
+                                self.rgbMap(i.getX(), self.width),
                                 200))
-            c.setOutline(color_rgb(rgbMap(i.getY(), self.height),
-                                   rgbMap(i.getX(), self.width),
+            c.setOutline(color_rgb(self.rgbMap(i.getY(), self.height),
+                                   self.rgbMap(i.getX(), self.width),
                                    200))
             self.doDraw(c)
             # Debug/headsup
@@ -196,7 +196,6 @@ class Main:
         originX = self.width/2  # Center of the screen X
         originY = self.height/2  # Center of the screen Y
         self.points = []  # Array will store all points on screen
-        loop = True  # Main loop declared for redundancy
         self.epochTime = time.clock()  # Holds the time of the functions beginning
 
         # Generate the initial point to start at.
@@ -241,7 +240,7 @@ class Main:
             if self.win.checkMouse():
                 break
 
-        pointtime = time.clock() - epochTime
+        pointtime = time.clock() - self.epochTime
         print ("Overall time calculating points: ", pointtime)
         print ("Points added: ", len(self.points))
         setDress.draw(self.win)
@@ -260,12 +259,12 @@ class Main:
                 # debug/headsup
                 if self.points.index(i)%150 == 1:
                     print ("Drawn ", self.points.index(i), " points in ",
-                           time.clock() - epochTime, ".")
+                           time.clock() - self.epochTime, ".")
         else:
-            allAsCircles(self.points)
+            self.allAsCircles(self.points)
 
         # debug/headsup
-        drawTime = time.clock() - epochTime
+        drawTime = time.clock() - self.epochTime
         print ("Overall time post drawing: ", drawTime)
 
         # debug/headsup
