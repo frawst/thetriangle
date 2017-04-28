@@ -28,68 +28,113 @@ from math import *
 
 def main():
     
+    ''' XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    XXXX
+    XXXX
+    XXXX        SYSTEM FUNCTIONS
+    XXXX
+    XXXX
+    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'''
+    
+    # Embed graphics.py draw() into a native function
     def doDraw(thing):
         thing.draw(win)
-        
+    
+    # 'erases' every graphics.py object in a list from the window
+    # Unused in current iteration
     def unDraw(thing):
         thing.undraw()
-    
+        
+    # Random number generator
     def randVal():
         value = randint(0,4085)
         return value
     
+    # Takes value and it's maximum and plots it to an RGB value (0-255)
     def rgbMap(val, limiter):
         val2 = (val/limiter) * 255
         int(val2)
         return int(val2)
     
-    def dfc(pointx, pointy, originx, originy):
-        output = abs(sqrt(pow(pointx - originx, 2) + pow(pointy - originy, 2)))
+    # MATH, calculates the distance between 2 points
+    # (point and origin) utilizing their x and y coords
+    def dfc(pointx, pointy, originX, originY):
+        output = abs(sqrt(pow(pointx - originX, 2) + pow(pointy - originY, 2)))
         return int(output)
-            
+    
+    # Takes a list of points as an argument and draws them all as circles
+    # isUsed to COLORIFY the image
     def allAsCircles(item):
         for i in item:
             c = Circle(i, 2)
+            
+            #### A super basic coloring method, ugly as f&$^ :)
             # if item.index(i) % 2 == 1:
             #     c.setFill('red')
             # else:
             #     c.setFill('green')
-            # dfc = abs(sqrt(pow(startx - i.getX(), 2) + pow(starty - i.getY(), 2)))
+            # dfc = abs(sqrt(pow(startx - i.getX(), 2) +
+            #                pow(starty - i.getY(), 2)))
             # int(dfc)
-            '''
-            c.setFill(color_rgb(rgbMap(i.getY(),height), rgbMap(i.getX(), width),
-                                rgbMap(dfc(i.getX(), i.getY(), originx, originy), width)))
-            c.setOutline(color_rgb(rgbMap(i.getY(),height), rgbMap(i.getX(), width),
-                                rgbMap(dfc(i.getX(), i.getY(), originx, originy), width)))'''
-                                
-            c.setFill(color_rgb(rgbMap(i.getY(), height), rgbMap(i.getX(), width), 200))
-            c.setOutline(color_rgb(rgbMap(i.getY(),height), rgbMap(i.getX(), width), 200))
-            doDraw(c)
-            if item.index(i)%150 == 1:
-                print ("Drawn ", item.index(i), " points in ", time.clock() - epochtime, ".")
             
+            #### An alternative coloring method
+            # c.setFill(color_rgb(rgbMap(i.getY(),height),
+            #                     rgbMap(i.getX(), width),
+            #                     rgbMap(dfc(i.getX(), i.getY(),
+            #                                originX, originY), width)))
+            # c.setOutline(color_rgb(rgbMap(i.getY(),height),
+            #                     rgbMap(i.getX(), width),
+            #                     rgbMap(dfc(i.getX(), i.getY(),
+            #                                originX, originY), width)))
+                                
+            c.setFill(color_rgb(rgbMap(i.getY(), height),
+                                rgbMap(i.getX(), width),
+                                200))
+            c.setOutline(color_rgb(rgbMap(i.getY(),height),
+                                   rgbMap(i.getX(), width),
+                                   200))
+            doDraw(c)
+            # Debug/headsup
+            if item.index(i)%150 == 1:
+                print ("Drawn ", item.index(i), " points in ",
+                       time.clock() - epochTime, ".")
+    
+    # BROKEN AS F#&@ DON'T USE
+    # The goal here was to fill the background pixels, pixel by pixel
+    # with the intention of creating nice color effects
+    # However, generating and manipulating all of these points is KILLER on
+    # processing capabilities
+    # ... This functionality would be nice to have, but NEEDS WORK
+    # TODO: Some function to paint the background based on pixel data
     def genBGPixels():
         bgpixels = []
         for x in range(width):
             for y in range(height):
                 newpoint = Point(x,y)
-                #newpoint.setFill(color_rgb(rgbMap(dfc(x,y,originx,originy), 1600)), rgbMap(dfc(x,y,originx,originy), 1600), rgbMap(dfc(x,y,originx,originy), 1600))
-                bgpixels.append(newpoint)
-                
+                #newpoint.setFill(color_rgb(rgbMap(dfc(x,y,originX,originY), 1600)), rgbMap(dfc(x,y,originX,originY), 1600), rgbMap(dfc(x,y,originX,originY), 1600))
+                bgpixels.append(newpoint)               
         return bgpixels
-            
-    def doDrawCircles(thing):
-        c = Circle(thing, 2)
-        c.setFill('red')
-        doDraw(c)
-            
+    
+    # Simple circle draw function, was used in testing
+    # def doDrawCircles(thing):
+    #     c = Circle(thing, 2)
+    #     c.setFill('red')
+    #     doDraw(c)
+    
+    # MAIN TRIANGLE FORMULATION FUNCTION
+    # This func utilizes native points list, moving towards a randomly
+    # selected vertex by the amount of half the distance between them,
+    # and then repeats, using the last formed point as a basis for
+    # the next point
     def genPoint():  # Create the next point
-        lastPoint = points[-1]
-        lastPointX = lastPoint.getX()
-        lastPointY = lastPoint.getY()
+        lastPoint = points[-1]  # Grab last point in list
+        lastPointX = lastPoint.getX()  # Grab that points X
+        lastPointY = lastPoint.getY()  # Grab that points Y
         
-        compare = randVal()
+        compare = randVal()  # Generate a random number
         
+        # Use modolu to select vertex to move to, 1/3 chance for each vertex
+        # 'focusPoint' is the vertex being moved towards
         if compare % 3 + 1 == 1:
             focusPoint = triangle[0]
             focusPointX = focusPoint[0]
@@ -103,6 +148,9 @@ def main():
             focusPointX = focusPoint[0]
             focusPointY = focusPoint[1]
             
+        # MATH. Determine where new point will be placed
+        # IF checks insure all subtraction generates a positive number
+        # could use abs()?
         if focusPointX > lastPointX:
             newX = ((focusPointX - lastPointX) / 2) + lastPointX
         else:
@@ -114,98 +162,125 @@ def main():
             newY = ((lastPointY - focusPointY) / 2) + focusPointY
             
         newpoint = Point(newX, newY)
-        newpoint.setFill('red')
+        #newpoint.setFill('red')
         points.append(newpoint)
+        
+    '''XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    XXXX
+    XXXX
+    XXXX      BEGIN MAIN FUNCTION
+    XXXX
+    XXXX
+    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'''
     
-    width = 2000
-    height = 1600
-    triangle = [[0, 0], [width, 0], [width/2, height]] # Starting Triangle
-    originx = width/2
-    originy = height/2
-    # triangle = [[50, 50], [150, 50], [150, 150]] # Starting Triangle
-    # startx =  125
-    # starty = 60
-    points = []
-    loop = True
+    ''' VARIABLES '''
+    # Operating variables, these can be changed to suit user
+    width = 2000  # Window/image width
+    height = 1600  # Window/image height
     
+    # Starting Triangle. [x1,y1], [x2,y2], [x3,y3]
+    triangle = [[0, 0], [width, 0], [width/2, height]]
+    
+    # Whether to render the final image using circles (True)
+    # or points/dots (False)
     drawAsCircles = True
     
-    startpoint = Point(originx, originy)
+    #Number of dots to generate
+    dotCount = 5000
     
+    ''' Developer Variables '''
+    # Developer variables, do not touch these
+    originX = width/2  # Center of the screen X
+    originY = height/2  # Center of the screen Y
+    points = []  # Array will store all points on screen
+    loop = True  # Main loop declared for redundancy
+    epochTime = time.clock()  # Holds the time of the functions beginning
+    
+    # Generate the initial point to start at.
+    # TODO: Replace this with a randomized point function
+    startPoint = Point(originX, originY)
+    
+    # Initialize the graphical window
     win = GraphWin('Serpinski Triangle', width, height) # Base Window
     win.setBackground('black')
-    setdress = Rectangle(Point(0,0),Point(width,height))
-    setdress.setFill('black')
+    
+    # Does the same thing as win.setBackground, but will be visible in PIL
+    # image output
+    setDress = Rectangle(Point(0,0),Point(width,height))
+    setDress.setFill('black')
     
     # Create the pseudo-random first point
     # TODO: Figure out how to generate a random point inside a triangle
     # newpoint = Point(randrange())
 
-    
-    for i in triangle: # Generates points for initial triangle
+    # Move initial triangle points into the points array
+    for i in triangle: 
         item = Point(i[0],i[1])
         points.append(item)
-        
-    points.append(startpoint)
     
-    # for z in range(10000):
-    epochtime = time.clock()
-    loopcount = 0
-    while loop:
-        nowtime = time.clock()
+    # Move the 'random' start point into the points array (Must occur after the
+    # triangle is placed into the array)
+    points.append(startPoint)
+    
+    # Begin main loop
+    # Here determine all points in triangle space
+    for step in range(dotCount):
+        # Time at beginning of loop
+        nowTime = time.clock()
         
+        # Create the next point
         genPoint()
         
-        # for i in points:
-        #     unDraw(i)
-        #     doDraw(i)
-        #     #doDrawCircles(i)
-            
-        pdrawtime = time.clock() - nowtime
-        print ("time since last point = ", pdrawtime)
-        
-        loopcount += 1
-        
-        #allAsCircles(points)
-        
+        # DEBUG, time it took to generate this point
+        # pDrawTime = time.clock() - nowTime
+        # print ("time since last point = ", pDrawTime)
+                      
         if win.checkMouse():
-            loop = False
+            break
         
-        if loopcount >= 5000:
-            loop = False
-        
-    pointtime = time.clock() - epochtime
+    pointtime = time.clock() - epochTime
     print ("Overall time calculating points: ", pointtime)
     print ("Points added: ", len(points))
-    setdress.draw(win)
+    setDress.draw(win)
+    
+    # Code to use genBGPixels, see genBGPixels for INFO
     # sdpoints = genBGPixels()
     # for i in sdpoints:
     #     doDraw(i)
     
+    # Generate visual circles/points for points[] data
+    # Critical that this is done last, as it takes a lot of time
     if drawAsCircles == False:
         for i in points:
             #unDraw(i)
             doDraw(i)
+            # debug/headsup
             if points.index(i)%150 == 1:
-                print ("Drawn ", points.index(i), " points in ", time.clock() - epochtime, ".")
+                print ("Drawn ", points.index(i), " points in ",
+                       time.clock() - epochTime, ".")
     else:
         allAsCircles(points)
 
-        
-    drawtime = time.clock() - epochtime
-    print ("Overall time post drawing: ", drawtime)
+    # debug/headsup
+    drawTime = time.clock() - epochTime
+    print ("Overall time post drawing: ", drawTime)
     
-    # imagefile = Image(width, height)
-    # imagefile.draw(win)
-    # imagefile.save('lasttfile.png')
-    
+    # debug/headsup
     print ("Converting TKinter properties to images...")
+    
+    # Converts the TKinter objects on screen to PILable form
+    # And then subsequently saves screen as a .png
+    # TODO: Make filename argumentable
     win.postscript(file='image.eps', colormode='color')
     img = NewImage.open('image.eps')
     img.save('new5.png', 'png')
     
+    # debug/headsup
     print ("File saved as new3.png")
+    
+    # ensure the final image is viewable before closing
     time.sleep(0.5)
+    # wait for a mouse input before closing
     win.getMouse()
     win.close()
     
