@@ -97,3 +97,5 @@ ENV/
 
 # Pycharm project settings
 .idea
+
+*.png
