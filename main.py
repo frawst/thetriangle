@@ -88,17 +88,17 @@ class Main:
             #                     rgbMap(dfc(i.getX(), i.getY(),
             #                                originX, originY), width)))
                                 
-            c.setFill(color_rgb(rgbMap(i.getY(), height),
-                                rgbMap(i.getX(), width),
+            c.setFill(color_rgb(rgbMap(i.getY(), self.height),
+                                rgbMap(i.getX(), self.width),
                                 200))
-            c.setOutline(color_rgb(rgbMap(i.getY(),height),
-                                   rgbMap(i.getX(), width),
+            c.setOutline(color_rgb(rgbMap(i.getY(), self.height),
+                                   rgbMap(i.getX(), self.width),
                                    200))
-            doDraw(c)
+            self.doDraw(c)
             # Debug/headsup
             if item.index(i)%150 == 1:
                 print ("Drawn ", item.index(i), " points in ",
-                       time.clock() - epochTime, ".")
+                       time.clock() - self.epochTime, ".")
     
     # BROKEN AS F#&@ DON'T USE
     # The goal here was to fill the background pixels, pixel by pixel
@@ -109,8 +109,8 @@ class Main:
     # TODO: Some function to paint the background based on pixel data
     def genBGPixels(self):
         bgpixels = []
-        for x in range(width):
-            for y in range(height):
+        for x in range(self.width):
+            for y in range(self.height):
                 newpoint = Point(x,y)
                 #newpoint.setFill(color_rgb(rgbMap(dfc(x,y,originX,originY), 1600)), rgbMap(dfc(x,y,originX,originY), 1600), rgbMap(dfc(x,y,originX,originY), 1600))
                 bgpixels.append(newpoint)               
@@ -128,24 +128,24 @@ class Main:
     # and then repeats, using the last formed point as a basis for
     # the next point
     def genPoint(self):  # Create the next point
-        lastPoint = points[-1]  # Grab last point in list
+        lastPoint = self.points[-1]  # Grab last point in list
         lastPointX = lastPoint.getX()  # Grab that points X
         lastPointY = lastPoint.getY()  # Grab that points Y
         
-        compare = randVal()  # Generate a random number
+        compare = self.randVal()  # Generate a random number
         
         # Use modolu to select vertex to move to, 1/3 chance for each vertex
         # 'focusPoint' is the vertex being moved towards
         if compare % 3 + 1 == 1:
-            focusPoint = triangle[0]
+            focusPoint = self.triangle[0]
             focusPointX = focusPoint[0]
             focusPointY = focusPoint[1]
         elif compare % 3 + 1 == 2:
-            focusPoint = triangle[1]
+            focusPoint = self.triangle[1]
             focusPointX = focusPoint[0]
             focusPointY = focusPoint[1]
         else:
-            focusPoint = triangle[2]
+            focusPoint = self.triangle[2]
             focusPointX = focusPoint[0]
             focusPointY = focusPoint[1]
             
@@ -164,7 +164,7 @@ class Main:
             
         newpoint = Point(newX, newY)
         #newpoint.setFill('red')
-        points.append(newpoint)
+        self.points.append(newpoint)
 
 
     def __init__(self):
@@ -178,11 +178,11 @@ class Main:
 
         ''' VARIABLES '''
         # Operating variables, these can be changed to suit user
-        width = 2000  # Window/image width
-        height = 1600  # Window/image height
+        self.width = 2000  # Window/image width
+        self.height = 1600  # Window/image height
 
         # Starting Triangle. [x1,y1], [x2,y2], [x3,y3]
-        triangle = [[0, 0], [width, 0], [width/2, height]]
+        self.triangle = [[0, 0], [self.width, 0], [self.width/2, self.height]]
 
         # Whether to render the final image using circles (True)
         # or points/dots (False)
@@ -193,23 +193,23 @@ class Main:
 
         ''' Developer Variables '''
         # Developer variables, do not touch these
-        originX = width/2  # Center of the screen X
-        originY = height/2  # Center of the screen Y
+        originX = self.width/2  # Center of the screen X
+        originY = self.height/2  # Center of the screen Y
         self.points = []  # Array will store all points on screen
         loop = True  # Main loop declared for redundancy
-        epochTime = time.clock()  # Holds the time of the functions beginning
+        self.epochTime = time.clock()  # Holds the time of the functions beginning
 
         # Generate the initial point to start at.
         # TODO: Replace this with a randomized point function
         startPoint = Point(originX, originY)
 
         # Initialize the graphical window
-        self.win = GraphWin('Serpinski Triangle', width, height) # Base Window
+        self.win = GraphWin('Serpinski Triangle', self.width, self.height) # Base Window
         self.win.setBackground('black')
 
         # Does the same thing as win.setBackground, but will be visible in PIL
         # image output
-        setDress = Rectangle(Point(0,0),Point(width,height))
+        setDress = Rectangle(Point(0,0),Point(self.width,self.height))
         setDress.setFill('black')
 
         # Create the pseudo-random first point
@@ -217,13 +217,13 @@ class Main:
         # newpoint = Point(randrange())
 
         # Move initial triangle points into the points array
-        for i in triangle:
+        for i in self.triangle:
             item = Point(i[0],i[1])
-            points.append(item)
+            self.points.append(item)
 
         # Move the 'random' start point into the points array (Must occur after the
         # triangle is placed into the array)
-        points.append(startPoint)
+        self.points.append(startPoint)
 
         # Begin main loop
         # Here determine all points in triangle space
@@ -232,19 +232,19 @@ class Main:
             nowTime = time.clock()
 
             # Create the next point
-            genPoint()
+            self.genPoint()
 
             # DEBUG, time it took to generate this point
             # pDrawTime = time.clock() - nowTime
             # print ("time since last point = ", pDrawTime)
 
-            if win.checkMouse():
+            if self.win.checkMouse():
                 break
 
         pointtime = time.clock() - epochTime
         print ("Overall time calculating points: ", pointtime)
-        print ("Points added: ", len(points))
-        setDress.draw(win)
+        print ("Points added: ", len(self.points))
+        setDress.draw(self.win)
 
         # Code to use genBGPixels, see genBGPixels for INFO
         # sdpoints = genBGPixels()
@@ -254,15 +254,15 @@ class Main:
         # Generate visual circles/points for points[] data
         # Critical that this is done last, as it takes a lot of time
         if drawAsCircles == False:
-            for i in points:
+            for i in self.points:
                 #unDraw(i)
-                doDraw(i)
+                self.doDraw(i)
                 # debug/headsup
-                if points.index(i)%150 == 1:
-                    print ("Drawn ", points.index(i), " points in ",
+                if self.points.index(i)%150 == 1:
+                    print ("Drawn ", self.points.index(i), " points in ",
                            time.clock() - epochTime, ".")
         else:
-            allAsCircles(points)
+            allAsCircles(self.points)
 
         # debug/headsup
         drawTime = time.clock() - epochTime
@@ -274,7 +274,7 @@ class Main:
         # Converts the TKinter objects on screen to PILable form
         # And then subsequently saves screen as a .png
         # TODO: Make filename argumentable
-        win.postscript(file='image.eps', colormode='color')
+        self.win.postscript(file='image.eps', colormode='color')
         img = NewImage.open('image.eps')
         img.save('new5.png', 'png')
 
@@ -284,7 +284,8 @@ class Main:
         # ensure the final image is viewable before closing
         time.sleep(0.5)
         # wait for a mouse input before closing
-        win.getMouse()
-        win.close()
-    
-main()
+        self.win.getMouse()
+        self.win.close()
+
+if __name__ == '__main__':
+    Main()
