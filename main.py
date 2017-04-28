@@ -97,7 +97,7 @@ class Main:
             # Debug/headsup
             if item.index(i) % 150 == 1:
                 print("Drawn ", item.index(i), " points in ",
-                      time.clock() - self.epochTime, ".")
+                      time.clock() - self.epoch_time, ".")
     
     # TODO: Some function to paint the background based on pixel data
     def gen_bg_pixels(self):
@@ -187,7 +187,7 @@ class Main:
         origin_x = self.width / 2  # Center of the screen X
         origin_y = self.height / 2  # Center of the screen Y
         self.points = []  # Array will store all points on screen
-        self.epochTime = time.clock()
+        self.epoch_time = time.clock()
 
         # Generate the initial point to start at.
         # TODO: Replace this with a randomized point function
@@ -229,7 +229,7 @@ class Main:
             if self.win.checkMouse():
                 break
 
-        point_time = time.clock() - self.epochTime
+        point_time = time.clock() - self.epoch_time
         print("Overall time calculating points: ", point_time)
         print("Points added: ", len(self.points))
         set_dress.draw(self.win)
@@ -248,12 +248,12 @@ class Main:
                 # debug/headsup
                 if self.points.index(i) % 150 == 1:
                     print("Drawn ", self.points.index(i), " points in ",
-                          time.clock() - self.epochTime, ".")
+                          time.clock() - self.epoch_time, ".")
         else:
             self.all_as_circles(self.points)
 
         # debug/headsup
-        draw_time = time.clock() - self.epochTime
+        draw_time = time.clock() - self.epoch_time
         print("Overall time post drawing: ", draw_time)
 
         # debug/headsup
