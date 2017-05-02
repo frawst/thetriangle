@@ -23,6 +23,7 @@ from random import *
 import time
 from PIL import Image as NewImage
 from math import *
+import argparse
 
 
 class Main:
@@ -42,7 +43,7 @@ class Main:
         value = randint(0, 4085)
         return value
 
-    def gen_start_point(self, triangle):
+    def gen_start_point(self):
         # pass body triangle as [[xy][xy][xy]]
         x=1
         y=1
@@ -51,9 +52,9 @@ class Main:
             x = random() / 3
             y = random() / 3
             z = random() / 3
-        ax = [x*triangle[0][0], x*triangle[0][1]]
-        ay = [y*triangle[1][0], y*triangle[1][1]]
-        az = [z*triangle[2][0], z*triangle[2][1]]
+        ax = [x*self.triangle[0][0], x*self.triangle[0][1]]
+        ay = [y*self.triangle[1][0], y*self.triangle[1][1]]
+        az = [z*self.triangle[2][0], z*self.triangle[2][1]]
         point_x = ax[0] + ay[0] + az[0]
         point_y = ax[1] + ay[1] + az[1]
         point = Point(point_x, point_y)
@@ -163,6 +164,9 @@ class Main:
         self.points.append(new_point)
 
     def __init__(self):
+        #PARSER -- BUILD FROM HERE
+        parser = argparse.ArgumentParser(description="Generating Serpinski Triangles")
+
         # VARIABLES
         # Operating variables, these can be changed to suit user
         self.width = 2000  # Window/image width
@@ -185,7 +189,7 @@ class Main:
         self.epoch_time = time.clock()
 
         # Generate the initial point to start at.
-        start_point = self.gen_start_point(self.triangle)
+        start_point = self.gen_start_point()
 
         # Initialize the graphical window
         self.win = GraphWin('Serpinski Triangle', self.width, self.height)
@@ -258,7 +262,7 @@ class Main:
 
         # debug/headsup
         print("File saved as new3.png")
-        print("Origin point was: ", self.points[3], ", ", self.points[3])
+        #print("Origin point was: ", self.points[3], ", ", self.points[3])
 
         # ensure the final image is viewable before closing
         time.sleep(0.5)
