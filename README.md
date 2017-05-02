@@ -9,7 +9,7 @@ frawst
 EclectickMedia
     
 ## TODO    
-- [ ] generating a random start point inside the triangle
+- [x] generating a random start point inside the triangle
 - [x] Fucking comment and organize shit, jezus damn.
 - [ ] Impliment parameter naming
 - [ ] Impliment paramater image sizing
