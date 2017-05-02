@@ -13,8 +13,6 @@
     git:github.com/frawst/thetriangle
     
     #TODO
-    # generating a random start point inside the triangle
-    # Fucking comment and organize shit, jezus damn.
     # Impliment parameter naming
     # Impliment paramater image sizing
     # Impliment parameter dot-count
@@ -43,6 +41,24 @@ class Main:
         """ Random number generator """
         value = randint(0, 4085)
         return value
+
+    def gen_start_point(self, triangle):
+        # pass body triangle as [[xy][xy][xy]]
+        x=1
+        y=1
+        z=1
+        while (x+y+z >= 1):
+            x = random() / 3
+            y = random() / 3
+            z = random() / 3
+        ax = [x*triangle[0][0], x*triangle[0][1]]
+        ay = [y*triangle[1][0], y*triangle[1][1]]
+        az = [z*triangle[2][0], z*triangle[2][1]]
+        point_x = ax[0] + ay[0] + az[0]
+        point_y = ax[1] + ay[1] + az[1]
+        point = Point(point_x, point_y)
+
+        return point
     
     @staticmethod
     def rgb_map(val, limiter):
@@ -100,27 +116,6 @@ class Main:
                       time.clock() - self.epoch_time, ".")
     
     # TODO: Some function to paint the background based on pixel data
-    def gen_bg_pixels(self):
-        """ BROKEN AS F#&@ DON'T USE (use deprecated)
-        The goal here was to fill the background pixels, pixel by pixel
-        with the intention of creating nice color effects
-        However, generating and manipulating all of these points is KILLER on
-        processing capabilities
-        ... This functionality would be nice to have, but NEEDS WORK """
-
-        bg_pixels = []
-        for x in range(self.width):
-            for y in range(self.height):
-                new_point = Point(x, y)
-                bg_pixels.append(new_point)
-        return bg_pixels
-
-    # TODO Should this commment block be class implementation docstring?
-    # Simple circle draw function, was used in testing
-    # def doDrawCircles(thing):
-    #     c = Circle(thing, 2)
-    #     c.setFill('red')
-    #     doDraw(c)
     
     # MAIN TRIANGLE FORMULATION FUNCTION
     def generate_point(self):  # Create the next point
@@ -190,8 +185,7 @@ class Main:
         self.epoch_time = time.clock()
 
         # Generate the initial point to start at.
-        # TODO: Replace this with a randomized point function
-        start_point = Point(origin_x, origin_y)
+        start_point = self.gen_start_point(self.triangle)
 
         # Initialize the graphical window
         self.win = GraphWin('Serpinski Triangle', self.width, self.height)
@@ -201,10 +195,6 @@ class Main:
         # image output
         set_dress = Rectangle(Point(0, 0), Point(self.width, self.height))
         set_dress.setFill('black')
-
-        # Create the pseudo-random first point
-        # TODO: Figure out how to generate a random point inside a triangle
-        # newpoint = Point(randrange())
 
         # Move initial triangle points into the points array
         for i in self.triangle:
@@ -268,6 +258,7 @@ class Main:
 
         # debug/headsup
         print("File saved as new3.png")
+        print("Origin point was: ", self.points[3], ", ", self.points[3])
 
         # ensure the final image is viewable before closing
         time.sleep(0.5)
